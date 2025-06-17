@@ -1,0 +1,2 @@
+Nguoi gui: BankTransaction{Name='chuc', AccountNumber=363, balance=9000.0, bank='mb', pin=0}
+Nguoi nhan :BankTransaction{Name='cuong', AccountNumber=8734, balance=0.0, bank='mb', pin=111}
