@@ -8,7 +8,6 @@ public class Main {
         Scanner sc=new Scanner(System.in);
         Banktransaction user=new Banktransaction();
 
-        int isCreated=1;
         int choice;
         do{
             System.out.println("\nCHON PHUONG THUC GIAO DICH\n");
@@ -19,17 +18,12 @@ public class Main {
             System.out.println("Chon: ");
             choice=sc.nextInt();
 
-            if((choice ==2 || choice==3) && isCreated==1){
-                System.out.println("Vui long tao tai khoan trc khi giao dich");
-                continue;//quay lai vong lap
-            }
             switch(choice){
                 case 1:
                     System.out.println("Nhap tai khoan :");
                     user.inputData();
-                    isCreated=0;
                     try{
-                        FileWriter fw=new FileWriter("taikhoan.txt",true);
+                        FileWriter fw=new FileWriter("FileData.txt",true);
                         BufferedWriter bw=new BufferedWriter(fw);
 
                         bw.write(user.toString()+"\n");
@@ -67,15 +61,13 @@ public class Main {
                                 }
 
                                 //cap nhap lai so du
-                                double currentBalance =user.getBalance();
-                                user.setBalance(currentBalance+amount);
-                                System.out.println("Nap tien thanh cong");
-                                System.out.println("So du moi : "+user.getBalance());
+                                user.setBalance(user.getBalance()+amount);
+                                UpdateTransaction(user,null,0);
                                 break;
                             case 2:
                                 System.out.println("Nhap so tien can rut: ");
                                 double rut=sc.nextDouble();
-                                while(rut<=0){
+                                while(rut<=0 || rut >user.getBalance()){
                                     System.out.println("So tien rut khong hop le!");
                                     System.out.println("Nhap so tien can rut: ");
                                     rut=sc.nextDouble();
@@ -89,10 +81,12 @@ public class Main {
                                     pin=sc.nextInt();
                                 }
 
-                                double withdraw= user.getBalance();
-                                user.setBalance(withdraw-rut);
-                                System.out.println("Rut tien thanh cong");
-                                System.out.println("So du moi: "+user.getBalance());
+//                                double withdraw= user.getBalance();
+//                                user.setBalance(user.getBalance()-rut);
+//                                System.out.println("Rut tien thanh cong");
+//                                System.out.println("So du moi: "+user.getBalance());
+                                user.setBalance(user.getBalance()-rut);
+                                UpdateTransaction(user,null,0);
 
                                 break;
                         }
@@ -104,11 +98,47 @@ public class Main {
                     Banktransaction recipient=findRecipient(accountnumber);
                     if(recipient==null){
                         System.out.println("Khong tim thay so tai khoan");
-                        break;
+                        int choose;
+                        do{
+                            System.out.println("NHAP LUA CHON:");
+                            System.out.println("0.Thoat");
+                            System.out.println("1.Tao tai khoan");
+                            System.out.println("2.Nhap so tai khoan");
+                            System.out.println("Chon: ");
+                            choose=sc.nextInt();
+                            switch (choose){
+                                case 1:
+                                    System.out.println("Tao tai khoan : ");
+                                    user.inputData();
+                                    break;
+                                case 2:
+                                    System.out.println("Nhap so tai khoan nguoi nhan:");
+                                    accountnumber=sc.nextInt();
+                                    recipient=findRecipient(accountnumber);
+                                    System.out.println("\nNhap so tien can chuyen: ");
+                                    double amount= sc.nextDouble();
+                                    while(amount <=0 || user.getBalance()< amount){
+                                        System.out.println("So tien chuyen khong hop le!");
+                                        System.out.println("\nNhap so tien can chuyen: ");
+                                        amount=sc.nextDouble();
+                                    }
+
+                                    System.out.println("\nNhap ma pin: ");
+                                    int pin=sc.nextInt();
+                                    while(user.getPin()!=pin){
+                                        System.out.println("Ma pin khong hop le!");
+                                        System.out.println("\nNhap ma pin: ");
+                                        pin=sc.nextInt();
+                                    }
+                                    UpdateTransaction(user,recipient,amount);
+                                    break;
+                            }
+
+                        }while(choose !=0);
                     }
                     System.out.println("\nNhap so tien can chuyen: ");
                     double amount= sc.nextDouble();
-                    while(amount <=0 && user.getBalance()< amount){
+                    while(amount <=0 || user.getBalance()< amount){
                         System.out.println("So tien chuyen khong hop le!");
                         System.out.println("\nNhap so tien can chuyen: ");
                         amount=sc.nextDouble();
@@ -141,15 +171,23 @@ public class Main {
 
                 String[] data = line.split(",");
 
-                // Cập nhật số dư người gửi
-                if (Integer.parseInt(data[0]) == user.getAccountNumber()) {
-                    data[3] = String.valueOf(user.getBalance() - amount);
+                if(recipient==null){
+                    if(Integer.parseInt(data[0])== user.getAccountNumber()){
+                        data[3]=String.valueOf(user.getBalance());
+                    }
+                }else{
+                    // Cập nhật số dư người gửi
+                    if (Integer.parseInt(data[0]) == user.getAccountNumber()) {
+                        data[3] = String.valueOf(user.getBalance() - amount);
+                    }
+
+                    // Cập nhật số dư người nhận
+                    if (Integer.parseInt(data[0]) == recipient.getAccountNumber()) {
+                        data[3] = String.valueOf(recipient.getBalance() + amount);
+                    }
                 }
 
-                // Cập nhật số dư người nhận
-                if (Integer.parseInt(data[0]) == recipient.getAccountNumber()) {
-                    data[3] = String.valueOf(recipient.getBalance() + amount);
-                }
+
 
                 sb.append(String.join(",", data)).append("\n");
             }
@@ -160,13 +198,6 @@ public class Main {
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(sb.toString());
             bw.close();
-
-            // 3. Ghi riêng người gửi vào taikhoan.txt
-            FileWriter f = new FileWriter("taikhoan.txt", false); // false = ghi đè
-            BufferedWriter b = new BufferedWriter(f);
-            user.setBalance(user.getBalance() - amount); // Trừ tiền
-            b.write(user.toString() + "\n");
-            b.close();
 
             System.out.println("Chuyen tien thanh cong. Da cap nhat vao file.");
 
@@ -198,5 +229,6 @@ public class Main {
         }
         return null;
     }
+
 
 }

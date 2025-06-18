@@ -69,7 +69,7 @@ public class Banktransaction {
         do{
             System.out.println("Nhap so du: ");
             balance=sc.nextDouble();
-        }while(balance <=0);
+        }while(balance <0);
         sc.nextLine();
         System.out.println("Nhap ngan hang: ");
         bank=sc.nextLine();
@@ -81,11 +81,9 @@ public class Banktransaction {
     @Override
     public String toString() {
         return
-                "name=" + name + ","+
-                " AccountNumber=" + AccountNumber +","+
-                " balance=" + balance +","+
-                " bank=" + bank + "," +
-                " pin=" + pin ;
+
+                 AccountNumber +","+ name + ","+
+                 bank + "," +  balance +","+ pin ;
 
     }
 }
