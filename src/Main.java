@@ -22,13 +22,34 @@ public class Main {
                 case 1:
                     System.out.println("Nhap tai khoan :");
                     user.inputData();
-                    try{
-                        FileWriter fw=new FileWriter("FileData.txt",true);
-                        BufferedWriter bw=new BufferedWriter(fw);
 
-                        bw.write(user.toString()+"\n");
-                        bw.close();
-                        System.out.println("\nTao tai khoan thanh cong");
+                    boolean count=false;
+                    try{
+                        FileReader fr=new FileReader("FileData.txt");
+                        BufferedReader br=new BufferedReader(fr);
+
+                        String line;
+                        while((line= br.readLine())!=null){
+                            if(line.trim().isEmpty()) continue;
+                            String [] data=line.split(",");
+                            if(Integer.parseInt(data[0])== user.getAccountNumber()){
+                                count=true;
+                                break;
+                            }
+                        }
+                        br.close();
+
+                        if(count){
+                            System.out.println("Tai khoan da ton tai");
+                        }else{
+                            FileWriter fw=new FileWriter("FileData.txt",true);
+                            BufferedWriter bw=new BufferedWriter(fw);
+
+                            bw.write(user.toString()+"\n");
+                            bw.close();
+                            System.out.println("\nTao tai khoan thanh cong");
+                        }
+
                     }catch(IOException e){
                         System.out.println("Loi khi khi file : "+e.getMessage());
                     }
@@ -44,6 +65,15 @@ public class Main {
                         option=sc.nextInt();
                         switch(option){
                             case 1:
+                                System.out.println("\nNhap so tai khoan:");
+                                int acount=sc.nextInt();
+                                Banktransaction people=findRecipient(acount);
+                                while(people==null){
+                                    System.out.println("Khong co so tai khoan do");
+                                    System.out.println("Nhap so tai khoan : ");
+                                    acount=sc.nextInt();
+
+                                }
                                 System.out.println("Nhap so tien can nap: ");
                                 double amount =sc.nextDouble();
                                 while(amount <=0){
@@ -54,20 +84,29 @@ public class Main {
 
                                 System.out.println("Nhap ma pin: ");
                                 int inputpin=sc.nextInt();
-                                while(inputpin!=user.getPin()){
+                                while(inputpin!=people.getPin()){
                                     System.out.println("\nMa pin khong hop le!");
                                     System.out.println("Nhap ma pin: ");
                                     inputpin=sc.nextInt();
                                 }
 
                                 //cap nhap lai so du
-                                user.setBalance(user.getBalance()+amount);
-                                UpdateTransaction(user,null,0);
+                                people.setBalance(people.getBalance()+amount);
+                                UpdateTransaction(people,null,0);
                                 break;
                             case 2:
+                                System.out.println("\nNhap so tai khoan:");
+                                int an=sc.nextInt();
+                                Banktransaction pp=findRecipient(an);
+                                while(pp==null){
+                                    System.out.println("Khong co so tai khoan do");
+                                    System.out.println("Nhap so tai khoan : ");
+                                    acount=sc.nextInt();
+
+                                }
                                 System.out.println("Nhap so tien can rut: ");
                                 double rut=sc.nextDouble();
-                                while(rut<=0 || rut >user.getBalance()){
+                                while(rut<=0 || rut >pp.getBalance()){
                                     System.out.println("So tien rut khong hop le!");
                                     System.out.println("Nhap so tien can rut: ");
                                     rut=sc.nextDouble();
@@ -75,7 +114,7 @@ public class Main {
 
                                 System.out.println("\nNhap ma pin: ");
                                 int pin=sc.nextInt();
-                                while(pin!=user.getPin()){
+                                while(pin!=pp.getPin()){
                                     System.out.println("Ma pin khong hop le !");
                                     System.out.println("\nNhap ma pin: ");
                                     pin=sc.nextInt();
@@ -85,8 +124,8 @@ public class Main {
 //                                user.setBalance(user.getBalance()-rut);
 //                                System.out.println("Rut tien thanh cong");
 //                                System.out.println("So du moi: "+user.getBalance());
-                                user.setBalance(user.getBalance()-rut);
-                                UpdateTransaction(user,null,0);
+                                pp.setBalance(pp.getBalance()-rut);
+                                UpdateTransaction(pp,null,0);
 
                                 break;
                         }
