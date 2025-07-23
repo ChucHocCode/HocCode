@@ -1,7 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.DAO.ReaderService;
-import model.Reader;
+import com.example.demo.model.Reader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,7 +1,7 @@
 package com.example.demo.DAO;
 
-import Repository.BookRepository;
-import model.Book;
+import com.example.demo.Repository.BookRepository;
+import com.example.demo.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +37,7 @@ public class BookService {
 
     //update
     public void updateQuantity(Integer code, Integer change){
-        Book b=getBookByCode(code);
+        Book b  =getBookByCode(code);
         if(b!= null){
             b.setQuantity(b.getQuantity()+change);
             bookRepository.save(b);

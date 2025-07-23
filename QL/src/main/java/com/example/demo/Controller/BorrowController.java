@@ -1,7 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.DAO.BorrowService;
-import model.Borrow;
+import com.example.demo.model.Borrow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

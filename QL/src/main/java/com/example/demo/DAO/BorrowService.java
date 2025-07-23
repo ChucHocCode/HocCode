@@ -1,9 +1,9 @@
 package com.example.demo.DAO;
 
-import Repository.BookRepository;
-import Repository.BorrowRepository;
-import model.Borrow;
-import model.Book;
+import com.example.demo.Repository.BookRepository;
+import com.example.demo.Repository.BorrowRepository;
+import com.example.demo.model.Borrow;
+import com.example.demo.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

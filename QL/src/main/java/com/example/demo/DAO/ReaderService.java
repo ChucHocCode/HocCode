@@ -1,7 +1,7 @@
 package com.example.demo.DAO;
 
-import Repository.ReaderRepository;
-import model.Reader;
+import com.example.demo.Repository.ReaderRepository;
+import com.example.demo.model.Reader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
